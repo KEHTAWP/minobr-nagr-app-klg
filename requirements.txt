@@ -1,0 +1,6 @@
+pywebview>=5.0
+reportlab>=4.0
+# Pillow нужен reportlab для работы с изображениями
+pillow>=10.0
+# движок окна на Windows (Microsoft Edge WebView2)
+pythonnet>=3.0 ; sys_platform == "win32"

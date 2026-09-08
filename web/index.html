@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портал для подачи документов на награды в Калужской области</title>
+    <!-- значок вкладки: без него браузер просит /favicon.ico и получает отказ -->
+    <link rel="icon" href="images/sgerb.png">
+    <link rel="stylesheet" href="css/app.css">
+    <script>
+        /* Проверка браузера. Написана намеренно на самом простом
+           диалекте JavaScript, чтобы выполнилась даже в Internet Explorer
+           и успела показать понятное объяснение вместо пустой страницы. */
+        (function () {
+            var ok = (typeof window.Promise !== 'undefined') &&
+                     (typeof window.fetch !== 'undefined') &&
+                     (typeof document.querySelector !== 'undefined');
+            if (ok) { return; }
+            window.PORTAL_OLD_BROWSER = true;
+            document.addEventListener('DOMContentLoaded', function () {
+                document.body.innerHTML =
+                    '<div style="max-width:720px;margin:60px auto;padding:0 24px;' +
+                    'font-family:Calibri,Arial,sans-serif;color:#1e2a3a;line-height:1.7">' +
+                    '<h1 style="color:#004a9b;font-size:26px;margin-bottom:18px">' +
+                    'Программа не может работать в этом браузере</h1>' +
+                    '<p style="font-size:17px">Скорее всего, страница открылась в ' +
+                    'Internet Explorer. Он слишком старый и не поддерживает того, ' +
+                    'что нужно программе для работы.</p>' +
+                    '<p style="font-size:17px"><b>Что сделать:</b> откройте эту же ' +
+                    'страницу в Google Chrome, Яндекс.Браузере или Mozilla Firefox. ' +
+                    'Скопируйте адрес из адресной строки и вставьте его в другой ' +
+                    'браузер.</p>' +
+                    '<p style="font-size:17px">Если ни одного из этих браузеров на ' +
+                    'компьютере нет, его нужно установить — достаточно один раз. ' +
+                    'После этого программа будет открываться сама.</p>' +
+                    '<p style="font-size:15px;color:#7b8fa1;margin-top:28px">' +
+                    'Окно программы, которое запустило эту страницу, закрывать ' +
+                    'не нужно.</p></div>';
+            });
+        })();
+    </script>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="header-brand">
+            <img src="images/sgerb.png" alt="Герб Калужской области" class="coat-of-arms"
+                 id="coat-of-arms" draggable="false">
+            <h1 class="site-title">Портал для подачи документов на награды в Калужской области</h1>
+        </div>
+        <div class="service-badge hidden" id="service-badge">служебный режим</div>
+        <div class="search-wrapper" id="search-wrapper">
+            <input type="text" id="search-input" class="search-box" placeholder="Поиск награды...">
+        </div>
+    </header>
+
+    <!-- ================= Экран 1: выбор награды ================= -->
+    <main class="main-content" id="screen-home">
+        <h2 class="section-title">Выберите уровень награды</h2>
+        <div class="level-list" id="levels-container"></div>
+        <div class="footer-note" style="margin-top:40px;text-align:center;color:#9aafbf">
+            <p>* Для подачи документов выберите конкретную награду</p>
+        </div>
+    </main>
+
+    <!-- ================= Экран 2: информация о награде ================= -->
+    <main class="main-content narrow hidden" id="screen-award">
+        <h2 class="award-title" id="award-title"></h2>
+        <div class="info-blocks" id="award-blocks"></div>
+        <div class="action-buttons">
+            <button class="btn btn-back" data-action="home">← Обратно</button>
+            <button class="btn btn-submit" data-action="start-form">Сформировать документы</button>
+        </div>
+    </main>
+
+    <!-- ================= Экран 3: анкета ================= -->
+    <main class="main-content narrow hidden" id="screen-form">
+        <h2 class="award-title" id="form-award-title"></h2>
+        <div class="steps" id="steps-bar"></div>
+        <div id="step-body"></div>
+        <div class="action-buttons">
+            <button class="btn btn-back" id="btn-prev">← Назад</button>
+            <button class="btn btn-submit" id="btn-next">Далее →</button>
+        </div>
+    </main>
+
+    <!-- ================= Экран 4: готово ================= -->
+    <main class="main-content narrow hidden" id="screen-done">
+        <h2 class="award-title">Документы сформированы</h2>
+        <div class="result-box" id="done-message"></div>
+        <div class="action-buttons">
+            <button class="btn btn-back" id="btn-open-file">Открыть документ</button>
+            <button class="btn btn-back" id="btn-open-folder">Показать папку</button>
+            <button class="btn btn-back" id="btn-back-form">Исправить анкету</button>
+            <button class="btn btn-submit" id="btn-finish">Завершить</button>
+        </div>
+    </main>
+
+    <!-- ================= Служебный режим =================
+         Окно вызывается скрытым сочетанием на главном экране и снимает
+         ограничение по срокам подачи — оно нужно, чтобы проверять
+         формирование документов в любое время года. -->
+    <div class="overlay hidden" id="service-overlay">
+        <div class="overlay-card service-card">
+            <h3 id="service-title">Служебный режим</h3>
+            <p id="service-text">Введите пароль.</p>
+            <input type="password" id="service-password" autocomplete="off">
+            <div class="service-error hidden" id="service-error"></div>
+            <div class="service-actions">
+                <button class="btn btn-back" id="service-cancel">Отмена</button>
+                <button class="btn btn-submit" id="service-ok">Продолжить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= Индикатор формирования ================= -->
+    <div class="overlay hidden" id="overlay">
+        <div class="overlay-card">
+            <div class="spinner"></div>
+            <div id="overlay-text">Формируем документы…</div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
